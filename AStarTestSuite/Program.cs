@@ -198,13 +198,13 @@ namespace AStarTestSuite
 
             public bool InClosedSet { get; set; }
             public Node CameFrom { get; set; }
-            public float GScore { get; set; }
+            public float GScore { get; set; } = float.PositiveInfinity;
 
             public void Reset()
             {
                 InClosedSet = false;
                 CameFrom = null;
-                GScore = 0;
+                GScore = float.PositiveInfinity;
             }
         }
 
@@ -223,7 +223,14 @@ namespace AStarTestSuite
                 var currentNode = openSet.Dequeue();
                 if (currentNode == to)
                 {
-                    return ReconstructPath(currentNode);
+                    var path = ReconstructPath(currentNode);
+
+                    foreach (var node in this)
+                    {
+                        node.Reset();
+                    }
+
+                    return path;
                 }
 
                 currentNode.InClosedSet = true;
@@ -258,6 +265,11 @@ namespace AStarTestSuite
                 }
             }
 
+            foreach (var node in this)
+            {
+                node.Reset();
+            }
+            
             return new List<Node>();
         }
 
@@ -373,6 +385,13 @@ namespace AStarTestSuite
             public int ClosedSet = 0;
             public float GScore = float.PositiveInfinity;
             public Node CameFrom;
+
+            public void Reset()
+            {
+                ClosedSet = 0;
+                GScore = Single.PositiveInfinity;
+                CameFrom = null;
+            }
         }
 
         public Parallel2Pathfinder(int width, int height, int blockChance, int seed = 1337) : base(width, height, blockChance, seed)
@@ -431,6 +450,11 @@ namespace AStarTestSuite
                 });
             }
 
+            foreach (var node in this)
+            {
+                node.Reset();
+            }
+            
             return path;
         }
 
